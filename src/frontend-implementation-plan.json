@@ -1,0 +1,67 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Add PayPal checkout option and in-app return confirmation for course purchases (frontend)",
+  "requirements": [
+    {
+      "id": "REQ-7",
+      "summary": "Offer PayPal as an additional checkout option on the course detail purchase UI, calling the backend PayPal-create capability and redirecting to PayPal approval.",
+      "acceptanceCriteria": [
+        "When viewing a paid course that the user has not purchased, the purchase section presents a PayPal option in addition to the existing Stripe purchase flow.",
+        "Clicking the PayPal option triggers a new React Query mutation that calls the backend PayPal create API and redirects the browser to the returned PayPal approval URL.",
+        "The PayPal option is disabled during pending mutation/loading states in the same situations as Stripe (e.g., while checking auth/profile or while a request is in-flight).",
+        "If the backend response is missing an approval URL/order identifier, the UI shows an error toast and does not navigate away.",
+        "The existing Stripe purchase behavior remains unchanged."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/CourseDetailPage.tsx",
+          "operation": "modify",
+          "description": "Add a second purchase action for PayPal alongside the existing Stripe button for paid, not-yet-purchased courses. Use a new React Query mutation hook (from frontend/src/hooks/useQueries.ts) to request PayPal order creation, store pendingPurchaseCourseId in sessionStorage (and optionally the PayPal order id for debugging), validate the returned JSON contains a non-empty approval/redirect URL and order identifier, show an English error toast and do not navigate away when missing, and redirect via window.location.href when present. Ensure the PayPal option shares the same disabled/loading gating as Stripe (auth/profile loading + request in-flight) and does not alter the existing Stripe flow."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Handle PayPal return confirmation on existing payment success/failure routes and refresh unlocked-course state without a hard refresh.",
+      "acceptanceCriteria": [
+        "The app can handle a PayPal return on the existing /payment-success route by detecting that the return is from PayPal (e.g., via a query parameter) and extracting the PayPal order identifier from the URL.",
+        "On PayPal success returns, the page calls a new React Query mutation that invokes the backend PayPal confirm/capture API with (orderId, courseId) and shows the same clear loading/success/error states used for Stripe confirmation.",
+        "On successful PayPal confirmation, the frontend invalidates purchase-related queries (including purchasedCourses and hasPurchasedCourse for the relevant courseId) so the course becomes unlocked in the UI without a hard refresh.",
+        "On /payment-failure (or PayPal cancel), the app clears any pending purchase context (e.g., pendingPurchaseCourseId) the same way it currently does for Stripe cancellations."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PaymentSuccess.tsx",
+          "operation": "modify",
+          "description": "Extend the existing confirmation flow to support PayPal returns on /payment-success: detect PayPal vs Stripe by checking for a PayPal-specific query parameter (e.g., token/orderId) via getUrlParameter, extract the PayPal order identifier, then call a new React Query mutation hook to confirm/capture the PayPal order with (orderId, courseId) using the same loading/success/error UI states already present. Reuse pendingPurchaseCourseId from sessionStorage to supply courseId, and clear pending purchase context (pendingPurchaseCourseId and any PayPal-related pending keys) on success and appropriate error paths."
+        },
+        {
+          "path": "frontend/src/pages/PaymentFailure.tsx",
+          "operation": "modify",
+          "description": "Ensure PayPal cancellations are handled the same as Stripe by clearing any pending purchase context on mount (keep clearing pendingPurchaseCourseId) and additionally clear any PayPal-specific pending keys added for the new flow (e.g., pendingPaypalOrderId), while preserving existing English UI text and navigation behavior."
+        },
+        {
+          "path": "frontend/src/utils/urlParams.ts",
+          "operation": "modify",
+          "description": "If needed for PayPal detection, extend URL parameter helpers to robustly read PayPal return parameters from both standard query strings and hash-based routing (without changing existing behavior). Keep usage consistent with existing getUrlParameter/getPersistedUrlParameter patterns used by payment return handling."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Add React Query mutation hooks for PayPal create and confirm flows in useQueries.ts following the existing Stripe patterns.",
+      "acceptanceCriteria": [
+        "frontend/src/hooks/useQueries.ts includes a mutation hook to create a PayPal order/payment that calls the corresponding backend method and surfaces errors via toast.",
+        "frontend/src/hooks/useQueries.ts includes a mutation hook to confirm/capture a PayPal order that calls the corresponding backend method and invalidates the same purchase-related queries as the Stripe confirm hook."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add PayPal mutations mirroring the Stripe hooks style: (1) a create hook that calls the backend PayPal-create capability and uses toast for English error surfacing (return the backend JSON string or a parsed object, but ensure callers can validate approvalUrl/orderId); (2) a confirm/capture hook that calls the backend PayPal-confirm capability with (orderId, courseId), invalidates purchase-related queries (at least ['purchasedCourses'] and ['hasPurchasedCourse', courseId], plus any broader hasPurchasedCourse keys consistent with Stripe), and uses toast on error."
+        }
+      ]
+    }
+  ]
+}

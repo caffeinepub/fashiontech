@@ -1,0 +1,75 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-update-the-frontend-purchase-ui-on-the-course-detail-page-to-offer-paypal-as-an-additional-checkout-option-alongside-the-existing-stripe-checkout-purchase-button-using-the-backend-paypal-create-api-and-redirecting-the-user-to-paypal-approval",
+      "featureTitle": "Update the frontend purchase UI on the course detail page to offer PayPal as an additional checkout option alongside the existing Stripe Checkout purchase button, using the backend PayPal-create API and redirecting the user to PayPal approval.",
+      "files": [
+        "frontend/src/pages/CourseDetailPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "user-approval@3.0.0",
+        "stripe@3.0.0",
+        "http-outcalls@3.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-extend-the-payment-return-handling-so-paypal-returns-can-be-confirmed-in-app-and-the-unlocked-course-state-updates-without-a-hard-refresh-reusing-the-existing-payment-success-failure-pages-where-possible",
+      "featureTitle": "Extend the payment return handling so PayPal returns can be confirmed in-app and the unlocked-course state updates without a hard refresh, reusing the existing payment success/failure pages where possible.",
+      "files": [
+        "frontend/src/pages/PaymentFailure.tsx",
+        "frontend/src/pages/PaymentSuccess.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "user-approval@3.0.0",
+        "stripe@3.0.0",
+        "http-outcalls@3.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-react-query-hooks-for-the-new-paypal-backend-apis-following-the-existing-stripe-hooks-patterns-in-frontend-src-hooks-usequeries-ts",
+      "featureTitle": "Add React Query hooks for the new PayPal backend APIs, following the existing Stripe hooks patterns in frontend/src/hooks/useQueries.ts.",
+      "files": [
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "user-approval@3.0.0",
+        "stripe@3.0.0",
+        "http-outcalls@3.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

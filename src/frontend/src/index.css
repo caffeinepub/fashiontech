@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --radius: 0.75rem;
+        /* Fashion-forward color palette - Light Mode */
+        --background: 0.99 0 0;
+        --foreground: 0.15 0 0;
+        --card: 1 0 0;
+        --card-foreground: 0.15 0 0;
+        --popover: 1 0 0;
+        --popover-foreground: 0.15 0 0;
+        /* Deep fashion purple as primary */
+        --primary: 0.35 0.18 310;
+        --primary-foreground: 0.99 0 0;
+        /* Soft rose gold as secondary */
+        --secondary: 0.88 0.08 25;
+        --secondary-foreground: 0.25 0 0;
+        /* Muted tones */
+        --muted: 0.96 0.01 280;
+        --muted-foreground: 0.50 0.02 280;
+        /* Accent - vibrant fashion pink */
+        --accent: 0.65 0.22 340;
+        --accent-foreground: 0.99 0 0;
+        --destructive: 0.577 0.245 27.325;
+        --destructive-foreground: 0.99 0 0;
+        --border: 0.90 0.01 280;
+        --input: 0.90 0.01 280;
+        --ring: 0.35 0.18 310;
+        /* Fashion-themed chart colors */
+        --chart-1: 0.65 0.22 340;
+        --chart-2: 0.55 0.20 260;
+        --chart-3: 0.70 0.18 180;
+        --chart-4: 0.60 0.25 30;
+        --chart-5: 0.50 0.22 310;
+        /* Success color - emerald */
+        --success: 0.65 0.18 160;
+        --success-foreground: 0.99 0 0;
+    }
+
+    .dark {
+        --background: 0.12 0.02 280;
+        --foreground: 0.98 0.01 280;
+        --card: 0.18 0.02 280;
+        --card-foreground: 0.98 0.01 280;
+        --popover: 0.15 0.02 280;
+        --popover-foreground: 0.98 0.01 280;
+        /* Bright fashion purple for dark mode */
+        --primary: 0.70 0.22 310;
+        --primary-foreground: 0.12 0.02 280;
+        /* Rose gold accent */
+        --secondary: 0.35 0.08 25;
+        --secondary-foreground: 0.98 0.01 280;
+        --muted: 0.25 0.02 280;
+        --muted-foreground: 0.65 0.02 280;
+        /* Vibrant accent for dark */
+        --accent: 0.75 0.25 340;
+        --accent-foreground: 0.12 0.02 280;
+        --destructive: 0.65 0.25 27;
+        --destructive-foreground: 0.98 0 0;
+        --border: 0.25 0.02 280;
+        --input: 0.25 0.02 280;
+        --ring: 0.70 0.22 310;
+        --chart-1: 0.75 0.25 340;
+        --chart-2: 0.65 0.22 260;
+        --chart-3: 0.75 0.20 180;
+        --chart-4: 0.70 0.25 30;
+        --chart-5: 0.60 0.22 310;
+        --success: 0.70 0.20 160;
+        --success-foreground: 0.12 0.02 280;
+    }
+
+    * {
+        @apply border-border;
+    }
+    
+    body {
+        @apply bg-background text-foreground;
+        font-feature-settings: "rlig" 1, "calt" 1;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: oklch(var(--muted) / 0.3);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: oklch(var(--muted-foreground) / 0.3);
+        @apply rounded-lg;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: oklch(var(--muted-foreground) / 0.5);
+    }
+}
+
+@layer components {
+    .gradient-text {
+        @apply bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent;
+    }
+    
+    .fashion-gradient {
+        background: linear-gradient(
+            to bottom right,
+            oklch(var(--primary) / 0.1),
+            oklch(var(--accent) / 0.05),
+            oklch(var(--secondary) / 0.1)
+        );
+    }
+    
+    .glass-effect {
+        background: oklch(var(--background) / 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid oklch(var(--border) / 0.5);
+    }
+    
+    .hover-lift {
+        @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+    }
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}

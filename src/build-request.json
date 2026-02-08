@@ -1,0 +1,107 @@
+{
+  "kind": "build_request",
+  "title": "Add PayPal as an additional payment option for course purchases",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-6",
+      "text": "Add backend APIs to create and confirm PayPal payments for course purchases, analogous to the existing Stripe Checkout flow, so a PayPal purchase can be created by an authenticated caller and later confirmed to unlock the course.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "recent-1"
+        ],
+        "quotes": [
+          "I want to PayPal to connect"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend exposes a shared method to create a PayPal payment/order for the authenticated caller and returns a JSON string that includes at least an approval/redirect URL and a PayPal order identifier.",
+        "Backend stores a server-side mapping from the PayPal order identifier to the creating caller principal (to prevent other principals from claiming/confirming the order).",
+        "Backend exposes a shared method to confirm/capture a PayPal order given (orderId, courseId) and verifies with PayPal (via HTTPS outcalls) that the payment was successfully completed before marking the caller’s CoursePurchase for that course as #completed.",
+        "If PayPal reports the order is not approved/paid (or verification fails), the backend marks the purchase as #failed (or returns an error) and does not unlock the course.",
+        "All PayPal-related logic remains within the single Motoko actor in backend/main.mo (no additional backend services)."
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Update the frontend purchase UI on the course detail page to offer PayPal as an additional checkout option alongside the existing Stripe Checkout purchase button, using the backend PayPal-create API and redirecting the user to PayPal approval.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "recent-1"
+        ],
+        "quotes": [
+          "I want to PayPal to connect"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When viewing a paid course that the user has not purchased, the purchase section presents a PayPal option in addition to the existing Stripe purchase flow.",
+        "Clicking the PayPal option triggers a new React Query mutation that calls the backend PayPal create API and redirects the browser to the returned PayPal approval URL.",
+        "The PayPal option is disabled during pending mutation/loading states in the same situations as Stripe (e.g., while checking auth/profile or while a request is in-flight).",
+        "If the backend response is missing an approval URL/order identifier, the UI shows an error toast and does not navigate away.",
+        "The existing Stripe purchase behavior remains unchanged."
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Extend the payment return handling so PayPal returns can be confirmed in-app and the unlocked-course state updates without a hard refresh, reusing the existing payment success/failure pages where possible.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "recent-1"
+        ],
+        "quotes": [
+          "I want to PayPal to connect"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The app can handle a PayPal return on the existing /payment-success route by detecting that the return is from PayPal (e.g., via a query parameter) and extracting the PayPal order identifier from the URL.",
+        "On PayPal success returns, the page calls a new React Query mutation that invokes the backend PayPal confirm/capture API with (orderId, courseId) and shows the same clear loading/success/error states used for Stripe confirmation.",
+        "On successful PayPal confirmation, the frontend invalidates purchase-related queries (including purchasedCourses and hasPurchasedCourse for the relevant courseId) so the course becomes unlocked in the UI without a hard refresh.",
+        "On /payment-failure (or PayPal cancel), the app clears any pending purchase context (e.g., pendingPurchaseCourseId) the same way it currently does for Stripe cancellations."
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Add React Query hooks for the new PayPal backend APIs, following the existing Stripe hooks patterns in frontend/src/hooks/useQueries.ts.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "recent-1"
+        ],
+        "quotes": [
+          "I want to PayPal to connect"
+        ]
+      },
+      "acceptanceCriteria": [
+        "frontend/src/hooks/useQueries.ts includes a mutation hook to create a PayPal order/payment that calls the corresponding backend method and surfaces errors via toast.",
+        "frontend/src/hooks/useQueries.ts includes a mutation hook to confirm/capture a PayPal order that calls the corresponding backend method and invalidates the same purchase-related queries as the Stripe confirm hook."
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must remain a single Motoko actor in backend/main.mo; do not introduce additional backend services.",
+    "Do not edit any files under frontend/src/components/ui or any frontend immutablePaths listed in SYSTEM_CONTEXT; compose existing UI components instead.",
+    "Use English for all user-facing text."
+  ],
+  "nonGoals": [
+    "Implementing PayPal subscriptions/recurring billing.",
+    "Implementing PayPal webhooks (confirmation should be done via the in-app return and backend verification).",
+    "Replacing or removing the existing Stripe payment option."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

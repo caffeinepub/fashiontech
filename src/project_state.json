@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 5,
+  "summary": "Website/app in development with a purchase flow; user wants payments enabled via Stripe Checkout and also wants PayPal connected.",
+  "architectural_notes": [],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-update-the-frontend-purchase-redirect-urls-to-include-the-stripe-session-id-placeholder-so-the-app-can-read-it-on-return-set-successurl-and-cancelurl-to-include-session-id-checkout-session-id-preserving-existing-routes-payment-success-and-payment-failure",
+      "title": "Update the frontend purchase redirect URLs to include the Stripe session id placeholder so the app can read it on return: set `successUrl` and `cancelUrl` to include `?session_id={CHECKOUT_SESSION_ID}` (preserving existing routes `/payment-success` and `/payment-failure`).",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-payment-success-page-to-read-the-stripe-session-id-from-the-url-and-call-the-new-backend-confirmation-api-show-a-clear-loading-state-while-confirming-show-an-error-state-if-confirmation-fails-and-on-success-invalidate-purchased-course-queries-so-the-ui-reflects-the-unlocked-course",
+      "title": "Update the `/payment-success` page to read the Stripe `session_id` from the URL and call the new backend confirmation API; show a clear loading state while confirming, show an error state if confirmation fails, and on success invalidate purchased-course queries so the UI reflects the unlocked course.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-course-access-logic-reflects-confirmed-purchases-after-a-successful-payment-confirmation-usehaspurchasedcourse-courseid-returns-true-for-the-purchased-course-and-the-course-detail-ui-shows-the-enrolled-access-state-without-requiring-a-page-hard-refresh",
+      "title": "Ensure the course access logic reflects confirmed purchases: after a successful payment confirmation, `useHasPurchasedCourse(courseId)` returns true for the purchased course and the course detail UI shows the enrolled/access state without requiring a page hard refresh.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-purchase-ui-on-the-course-detail-page-to-offer-paypal-as-an-additional-checkout-option-alongside-the-existing-stripe-checkout-purchase-button-using-the-backend-paypal-create-api-and-redirecting-the-user-to-paypal-approval",
+      "title": "Update the frontend purchase UI on the course detail page to offer PayPal as an additional checkout option alongside the existing Stripe Checkout purchase button, using the backend PayPal-create API and redirecting the user to PayPal approval.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-payment-return-handling-so-paypal-returns-can-be-confirmed-in-app-and-the-unlocked-course-state-updates-without-a-hard-refresh-reusing-the-existing-payment-success-failure-pages-where-possible",
+      "title": "Extend the payment return handling so PayPal returns can be confirmed in-app and the unlocked-course state updates without a hard refresh, reusing the existing payment success/failure pages where possible.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-react-query-hooks-for-the-new-paypal-backend-apis-following-the-existing-stripe-hooks-patterns-in-frontend-src-hooks-usequeries-ts",
+      "title": "Add React Query hooks for the new PayPal backend APIs, following the existing Stripe hooks patterns in frontend/src/hooks/useQueries.ts.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Add Stripe Checkout to the app (enable payment flow via Stripe)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Implement/complete the backend Stripe Checkout session creation used by the frontend purchase flow: expose `createCheckoutSession(items, successUrl, cancelUrl)` so it returns a JSON string containing at least the Stripe Checkout session `id` and a redirect `url`, and ensure the session is linked to the authenticated caller so it cannot be claimed by other principals.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Add a backend API to finalize a Checkout payment after Stripe redirects back to the app (e.g., `confirmCheckoutSession(sessionId, courseId)` or equivalent): the backend must verify with Stripe that the session is paid/complete, then mark the corresponding `CoursePurchase` as `#completed` (or `#failed` when appropriate) for the caller and course.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Connect PayPal as an additional payment option (integrate PayPal into the existing purchase flow)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Add backend APIs to create and confirm PayPal payments for course purchases, analogous to the existing Stripe Checkout flow, so a PayPal purchase can be created by an authenticated caller and later confirmed to unlock the course.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "status": "pending"
+    }
+  ],
+  "projectName": "Add Stripe Checkout payment flow for course purchases",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
